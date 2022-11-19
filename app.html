@@ -63,8 +63,8 @@
                 
 
                 const parentNode = document.getElementById('listOfUsers');
-                const childHTML = `<li id=${user.email}> ${user.name} - ${user.email}
-                                        <button onclick=deleteUser('${user.email}')> Delete User </button>
+                const childHTML = `<li id=${user._id}> ${user.name} - ${user.email}
+                                        <button onclick=deleteUser('${user._id}')> Delete User </button>
                                         <button onclick=editUserDetails('${user.email}','${user.name}','${user.phonenumber}')>Edit User </button>
                                      </li>`
 
@@ -88,16 +88,21 @@
 
             // deleteUser('abc@gmail.com')
 
-            function deleteUser(emailId){
-                console.log(emailId)
-                localStorage.removeItem(emailId);
-                removeUserFromScreen(emailId);
+            function deleteUser(UserId){
+               axios.delete(`https://crudcrud.com/api/6de912f350cf4b60bb37139f02a9cb55/BookingApp/${UserId}`)
+               .then((response) => {
+                removeUserFromScreen(UserId)
+               })
+               .catch((err) => {
+                console.log(err)
+               })
+                
 
             }
 
-            function removeUserFromScreen(emailId){
+            function removeUserFromScreen(getId){
                 const parentNode = document.getElementById('listOfUsers');
-                const childNodeToBeDeleted = document.getElementById(emailId)//emailId stored id in screen(from the local storage) we are deleting that-ref line 54
+                const childNodeToBeDeleted = document.getElementById(getId)//emailId stored id in screen(from the local storage) we are deleting that-ref line 54
                 parentNode.removeChild(childNodeToBeDeleted)
             
             }
