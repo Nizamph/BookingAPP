@@ -1,0 +1,113 @@
+<html>
+    <body>
+        <form  onsubmit="saveToLocalStorage(event)">
+            <label> Name</label>
+            <input id='username' type="text" name="username"  required/>
+            <label> EmailId</label>
+            <input id='email' type="email" name="emailId"  required/>
+            <label> Phone Number</label>
+            <input id='phonenumber' type="tel" name="phonenumber" />
+            <button> Submit </button>
+        </form>
+        <ul id='listOfUsers'></ul>
+        <script>
+            function saveToLocalStorage(event) {
+                event.preventDefault();
+                const name = event.target.username.value;
+                const email = event.target.emailId.value;
+                const phonenumber = event.target.phonenumber.value;
+                // localStorage.setItem('name', name);
+                // localStorage.setItem('email', email);
+                // localStorage.setItem('phonenumber', phonenumber)
+                const obj = {
+                    name,
+                    email,
+                    phonenumber
+                }
+                localStorage.setItem(obj.email, JSON.stringify(obj))
+                showNewUserOnScreen(obj)
+            }
+
+            window.addEventListener("DOMContentLoaded", () => {
+                const localStorageObj = localStorage;
+                const localstoragekeys  = Object.keys(localStorageObj)
+
+                for(var i =0; i< localstoragekeys.length; i++){
+                    const key = localstoragekeys[i]
+                    const userDetailsString = localStorageObj[key];
+                    const userDetailsObj = JSON.parse(userDetailsString);
+                    showNewUserOnScreen(userDetailsObj)
+                }
+            })
+
+            function showNewUserOnScreen(user){
+                if(localStorage.getItem(user.email) !== null){
+                    removeUserFromScreen(user.email)
+                }
+                document.getElementById('email').value = ''; //here clear the data after we entering 
+                document.getElementById('username').value = '';
+                document.getElementById('phonenumber').value ='';
+                // console.log(localStorage.getItem(user.emailId))
+                
+
+                const parentNode = document.getElementById('listOfUsers');
+                const childHTML = `<li id=${user.email}> ${user.name} - ${user.email}
+                                        <button onclick=deleteUser('${user.email}')> Delete User </button>
+                                        <button onclick=editUserDetails('${user.email}','${user.name}','${user.phonenumber}')>Edit User </button>
+                                     </li>`
+
+                parentNode.innerHTML = parentNode.innerHTML + childHTML;// we are just combining ul and li tags
+
+              
+            }
+
+            //Edit User
+
+            function editUserDetails(emailId, name, phonenumber){
+
+                document.getElementById('email').value = emailId;//fetched local storage values will go to the space input spaces once we click the edit button
+                document.getElementById('username').value = name;
+                document.getElementById('phonenumber').value =phonenumber;
+
+                deleteUser(emailId)//delete from the form as well
+             }
+
+            // deleteUser('abc@gmail.com')
+
+            function deleteUser(emailId){
+                console.log(emailId)
+                localStorage.removeItem(emailId);
+                removeUserFromScreen(emailId);
+
+            }
+
+            function removeUserFromScreen(emailId){
+                const parentNode = document.getElementById('listOfUsers');
+                const childNodeToBeDeleted = document.getElementById(emailId)//emailId stored id in screen(from the local storage) we are deleting that-ref line 54
+                if(childNodeToBeDeleted){
+                    parentNode.removeChild(childNodeToBeDeleted)
+                 
+                }
+                
+            
+            }
+
+            /*code flow:-
+            -fetch the data from the input form
+            -goes into the local storage
+            -data will go to the screen for showing 
+            -edge that we solved:- we are checkingg whether email id is there in local storage and 
+            and we are gonna delete that email from the screen if it is there(cheat code:- checking previous ones with new one )
+
+            -v*/
+            
+
+
+
+
+        </script>
+
+
+    </body>
+</html>
+
